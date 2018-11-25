@@ -1,16 +1,17 @@
-import { getAllConnections, addOrUpdateConnectionInDB } from '../db/indexedDB'
+import { getAllConnections, addOrUpdateConnectionInDB } from '../db/indexedDB';
 
 export const loadConnectionsFromDB = () => async dispatch => {
-    const connections = await getAllConnections();
-    dispatch({ type: 'LOAD_CONNECTIONS_SUCCESS', connections: connections});
-}
+  const connections = await getAllConnections();
 
-export const addConnection = (connection) => async dispatch => {
-    await addOrUpdateConnectionInDB(connection);
-    dispatch({ type: 'ADD_CONNECTION', connection: connection });
-}
+  dispatch({ type: 'LOAD_CONNECTIONS_SUCCESS', connections });
+};
 
-export const changeColorConnection = (connection) => async dispatch => {
-    await addOrUpdateConnectionInDB(connection);
-    dispatch({ type: 'CHANGE_COLOR_CONNECTION', connection: connection });
-}
+export const addConnection = connection => async dispatch => {
+  await addOrUpdateConnectionInDB(connection);
+  dispatch({ type: 'ADD_CONNECTION', connection });
+};
+
+export const changeColorConnection = connection => async dispatch => {
+  await addOrUpdateConnectionInDB(connection);
+  dispatch({ type: 'CHANGE_COLOR_CONNECTION', connection });
+};

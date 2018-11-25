@@ -1,8 +1,8 @@
 const initialState = [];
-  
+
 export default function nodes(state = initialState, action) {
-  switch (action.type){
-    case 'ADD_NODE': 
+  switch (action.type) {
+    case 'ADD_NODE':
       return [
         ...state,
         action.node
@@ -14,14 +14,16 @@ export default function nodes(state = initialState, action) {
     case 'CHANGE_COLOR_NODE':
     case 'CHANGE_TEXT_NODE':
     case 'UPDATE_POSITION_NODE':
-    case 'CHANGE_COMMENT_NODE':
+    case 'CHANGE_COMMENT_NODE': {
       const index = state.findIndex(x => x.id === action.node.id);
+
       return [...state.slice(0, index),
         action.node,
         ...state.slice(index + 1)];
+    }
     case 'CLEAR_NODES':
-        return initialState;
+      return initialState;
     default:
-    return state;
+      return state;
   }
 }

@@ -1,9 +1,8 @@
 const initialState = [];
-  
+
 export default function connections(state = initialState, action) {
-  switch (action.type){
+  switch (action.type) {
     case 'ADD_CONNECTION':
-      console.log('ADD_CONNECTION', action);
       return [
         ...state,
         action.connection
@@ -15,6 +14,6 @@ export default function connections(state = initialState, action) {
     case 'CLEAR_CONNECTIONS':
       return initialState;
     default:
-    return state;
+      return state;
   }
 }
