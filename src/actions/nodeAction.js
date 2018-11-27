@@ -14,7 +14,7 @@ export const addNode = node => async dispatch => {
 export const deleteNode = (id, connections) => async dispatch => {
   await deleteNodeFromDB(id, connections);
   dispatch({ type: 'DELETE_NODE', id });
-  dispatch({ type: 'DELETE_CONNECTIONS', id });
+  dispatch({ type: 'DELETE_CONNECTIONS', connections });
 };
 
 export const updatePositionNodeFromDB = node => async dispatch => {

@@ -11,9 +11,11 @@ import 'jsplumb';
 import './react-contextmenu.css';
 import { loadNodesFromDB } from './actions/nodeAction';
 import { loadConnectionsFromDB } from './actions/connectionAction';
+import { loadThemeSettingsFromDB } from './actions/appAction';
 
 const store = createStore(reducer, composeWithDevTools(applyMiddleware(thunk)));
 
+store.dispatch(loadThemeSettingsFromDB());
 store.dispatch(loadNodesFromDB());
 store.dispatch(loadConnectionsFromDB());
 

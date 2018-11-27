@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import '../App.css';
@@ -30,10 +31,8 @@ class Node extends Component {
         connector: 'Flowchart',
         endpoint: 'Rectangle',
         maxConnections: -1,
-        paintStyle: { fill: 'white', outlineStroke: 'blue', strokeWidth: 3 },
-        hoverPaintStyle: { outlineStroke: 'lightblue' },
-        connectorStyle: { outlineStroke: 'green', strokeWidth: 1 },
-        connectorHoverStyle: { strokeWidth: 2 },
+        paintStyle: { fill: 'white', outlineStroke: 'blue', strokeWidth: 1 },
+        hoverPaintStyle: { strokeWidth: 3 },
         dropOptions: {}
       };
 
@@ -74,20 +73,34 @@ class Node extends Component {
   deleteNode = (e, data) => {
     const { connections, onDeleteNode } = this.props;
 
-    let elementID = `${data.id.toString()}l`;
+    const leftElementID = `${data.id.toString()}l`;
 
-    jsPlumb.deleteConnectionsForElement(elementID);
-    jsPlumb.deleteEndpoint(elementID);
-    elementID = `${data.id.toString()}r`;
-    jsPlumb.deleteConnectionsForElement(elementID);
-    jsPlumb.deleteEndpoint(elementID);
-    elementID = `${data.id.toString()}t`;
-    jsPlumb.deleteConnectionsForElement(elementID);
-    jsPlumb.deleteEndpoint(elementID);
-    elementID = `${data.id.toString()}b`;
-    jsPlumb.deleteConnectionsForElement(elementID);
-    jsPlumb.deleteEndpoint(elementID);
-    onDeleteNode(data.id, connections.filter(x => x.sourceId === data.id || x.targetId === data.id));
+    jsPlumb.deleteConnectionsForElement(leftElementID);
+    jsPlumb.deleteEndpoint(leftElementID);
+
+    const rightElementID = `${data.id.toString()}r`;
+
+    jsPlumb.deleteConnectionsForElement(rightElementID);
+    jsPlumb.deleteEndpoint(rightElementID);
+
+    const topElementID = `${data.id.toString()}t`;
+
+    jsPlumb.deleteConnectionsForElement(topElementID);
+    jsPlumb.deleteEndpoint(topElementID);
+
+    const bottomElementID = `${data.id.toString()}b`;
+
+    jsPlumb.deleteConnectionsForElement(bottomElementID);
+    jsPlumb.deleteEndpoint(bottomElementID);
+
+    onDeleteNode(data.id, connections.filter(x => x.sourceId === leftElementID
+      || x.sourceId === rightElementID
+      || x.sourceId === topElementID
+      || x.sourceId === bottomElementID
+      || x.targetId === leftElementID
+      || x.targetId === rightElementID
+      || x.targetId === topElementID
+      || x.targetId === bottomElementID));
   }
 
   editNode = (e, data) => {
@@ -130,11 +143,8 @@ class Node extends Component {
 }
 
 Node.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
   item: PropTypes.object.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
   style: PropTypes.object.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
   connections: PropTypes.array.isRequired,
   onChangeTextNode: PropTypes.func.isRequired,
   onEditNode: PropTypes.func.isRequired,
