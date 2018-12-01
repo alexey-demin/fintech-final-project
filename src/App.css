@@ -1,0 +1,69 @@
+.App {
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
+#mainDiv {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.node {
+  width: 200px;
+  height: 60px;
+  color: white;
+  border-radius: 3em;
+  padding: 1%;
+  display: inline-block;
+  text-align: right;
+}
+
+.nodeButton {
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  width: 30px;
+  height: 30px;
+  background-color: Transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+}
+
+#addCommentButton {
+  margin: 5px;
+}
+
+#editNodePanel {
+  border: #282c34;
+  border-style: solid;
+  position: absolute;
+  z-index: 999999;
+  top: 15%;
+  right: 0;
+  width: 250px;
+  height: 350px;
+  background-color: whitesmoke;
+  align-content: center;
+  padding: 1%;
+}
+
+.editNodeTextArea {
+  resize: none;
+  width: 230px;
+  height: 50px;
+}
+
+.multiline {
+  white-space: pre-wrap;
+  padding: 20px;
+}
