@@ -60,6 +60,13 @@ export async function addOrUpdateConnectionInDB(connection) {
   await db.transaction([connectionsTableName], 'readwrite').objectStore(connectionsTableName).put(connection, connection.id.toString());
 }
 
+export async function deleteConnectionFromDB(connection) {
+  const db = await openDB();
+
+  await db.transaction([connectionsTableName], 'readwrite')
+    .objectStore(connectionsTableName).delete(connection.id.toString());
+}
+
 export async function getThemeSettings() {
   const db = await openDB();
 

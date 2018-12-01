@@ -9,6 +9,8 @@ export default function connections(state = initialState, action) {
       ];
     case 'DELETE_CONNECTIONS':
       return [...state.filter(x => !action.connections.includes(x))];
+    case 'DELETE_CONNECTION':
+      return [...state.filter(x => x.id !== action.connection.id)];
     case 'LOAD_CONNECTIONS_SUCCESS':
       return [...state, ...action.connections];
     case 'CLEAR_CONNECTIONS':

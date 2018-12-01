@@ -7,14 +7,14 @@ import Node from './components/Node';
 import ButtonAppBar from './components/ButtonAppBar';
 import './App.css';
 import { addNode } from './actions/nodeAction';
-import { addConnection } from './actions/connectionAction';
+import { addConnection, deleteConnection } from './actions/connectionAction';
 import { createNewMindMap } from './actions/appAction';
 import EditNodePanel from './components/EditNodePanel';
 
 class App extends Component {
   componentDidMount() {
     jsPlumb.bind('connection', info => {
-      const { connections, onAddConnection } = this.props;
+      const { connections, onAddConnection, onDeleteConnection } = this.props;
       const endPoints = info.connection.getUuids();
 
       if (!connections.find(x => x.sourceId.slice(0, -1) === endPoints[0].slice(0, -1)
@@ -30,6 +30,18 @@ class App extends Component {
           jsPlumb.deleteConnection(conn[conn.length - 1]);
         }
       }
+
+      info.connection.bind('dblclick', conn => {
+        const endPointsConn = info.connection.getUuids();
+        // eslint-disable-next-line no-shadow
+        const { connections } = this.props;
+
+        const connection = connections.find(x => x.sourceId.toString() === endPointsConn[0].toString()
+          && x.targetId.toString() === endPointsConn[1].toString());
+
+        onDeleteConnection(connection);
+        jsPlumb.deleteConnection(conn);
+      });
     });
   }
 
@@ -132,7 +144,8 @@ App.propTypes = {
   themeSettings: PropTypes.object.isRequired,
   onCreateNode: PropTypes.func.isRequired,
   onCreateNewMindmap: PropTypes.func.isRequired,
-  onAddConnection: PropTypes.func.isRequired
+  onAddConnection: PropTypes.func.isRequired,
+  onDeleteConnection: PropTypes.func.isRequired
 };
 
 export default connect(
@@ -152,6 +165,9 @@ export default connect(
     },
     onAddConnection: connection => {
       dispatch(addConnection(connection));
+    },
+    onDeleteConnection: connection => {
+      dispatch(deleteConnection(connection));
     }
   })
 )(App);

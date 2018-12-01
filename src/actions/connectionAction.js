@@ -1,4 +1,4 @@
-import { getAllConnections, addOrUpdateConnectionInDB } from '../db/indexedDB';
+import { getAllConnections, addOrUpdateConnectionInDB, deleteConnectionFromDB } from '../db/indexedDB';
 
 export const loadConnectionsFromDB = () => async dispatch => {
   const connections = await getAllConnections();
@@ -14,4 +14,9 @@ export const addConnection = connection => async dispatch => {
 export const changeColorConnection = connection => async dispatch => {
   await addOrUpdateConnectionInDB(connection);
   dispatch({ type: 'CHANGE_COLOR_CONNECTION', connection });
+};
+
+export const deleteConnection = connection => async dispatch => {
+  await deleteConnectionFromDB(connection);
+  dispatch({ type: 'DELETE_CONNECTION', connection });
 };
