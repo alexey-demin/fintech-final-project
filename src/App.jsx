@@ -88,7 +88,15 @@ class App extends Component {
     return <Node key={node.id} item={node} style={style} />;
   }
 
-  createNode(event) {
+  showEditNodePanel = () => {
+    const { editNode } = this.props;
+
+    if (Object.keys(editNode).length !== 0) {
+      return <EditNodePanel />;
+    }
+  }
+
+  createNode = event => {
     const { onCreateNode, themeSettings } = this.props;
 
     const node = {
@@ -101,14 +109,6 @@ class App extends Component {
     };
 
     onCreateNode(node);
-  }
-
-  showEditNodePanel() {
-    const { editNode } = this.props;
-
-    if (Object.keys(editNode).length !== 0) {
-      return <EditNodePanel />;
-    }
   }
 
   render() {
@@ -152,9 +152,6 @@ export default connect(
     },
     onAddConnection: connection => {
       dispatch(addConnection(connection));
-    },
-    onEditConnection: connection => {
-      dispatch({ type: 'START_EDIT_CONNECTION', connection });
     }
   })
 )(App);

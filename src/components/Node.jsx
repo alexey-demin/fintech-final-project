@@ -37,7 +37,6 @@ class Node extends Component {
   addDragDrop = () => {
     jsPlumb.ready(() => {
       const { item, onUpdatePosition } = this.props;
-      const els = document.querySelectorAll('.wrapper');
 
       const common = {
         isSource: true,
@@ -79,8 +78,6 @@ class Node extends Component {
         uuid: `${item.id.toString()}b`,
         allowLoopback: false
       }, common);
-
-      jsPlumb.draggable(els);
     });
   }
 
