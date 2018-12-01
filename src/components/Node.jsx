@@ -2,16 +2,30 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import '../App.css';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 import { jsPlumb } from 'jsplumb';
-import ReactTooltip from 'react-tooltip';
 import Input from '@material-ui/core/Input';
-import { deleteNode, updatePositionNodeFromDB, changeTextNode } from '../actions/nodeAction';
+import Popover from '@material-ui/core/Popover';
+import { deleteNode, updatePositionNodeFromDB, changeNode } from '../actions/nodeAction';
+import CommentsIcon from '../image/comments.png';
+import DescriptionIcon from '../image/description.png';
+
+const theme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+    suppressDeprecationWarnings: true
+  }
+});
 
 class Node extends Component {
-  // eslint-disable-next-line react/destructuring-assignment
-  state = { text: this.props.item.text }
+  state = {
+    // eslint-disable-next-line react/destructuring-assignment
+    text: this.props.item.text,
+    anchorComments: null,
+    anchorDescription: null
+  }
 
   componentDidMount() {
     const { item } = this.props;
@@ -110,13 +124,108 @@ class Node extends Component {
   }
 
   changeTextNode = () => {
-    const { item, onChangeTextNode } = this.props;
+    const { item, onChangeNode } = this.props;
     const { text } = this.state;
 
     if (item.text !== text) {
       item.text = text;
-      onChangeTextNode(item);
+      onChangeNode(item);
     }
+  }
+
+  showDescription = event => {
+    const { item } = this.props;
+    const { text, anchorComments } = this.state;
+
+    if (item.description.length > 0) {
+      this.setState({
+        anchorComments,
+        text,
+        anchorDescription: event.currentTarget
+      });
+    }
+  };
+
+  showComments = event => {
+    const { item } = this.props;
+    const { text, anchorDescription } = this.state;
+
+    if (item.comments.length > 0) {
+      this.setState({
+        anchorComments: event.currentTarget,
+        text,
+        anchorDescription
+      });
+    }
+  };
+
+  handleClose = () => {
+    const { text } = this.state;
+
+    this.setState({
+      anchorComments: null,
+      anchorDescription: null,
+      text
+    });
+  }
+
+  createComment = comment => (
+    <div key={comment.date} className="multiline">
+      {comment.text}
+      <br />
+      {'Дата: '}
+      {(new Date(comment.date)).toLocaleString()}
+    </div>)
+
+
+  createPopoverComments = () => {
+    const { anchorComments } = this.state;
+    const { item } = this.props;
+    const open = Boolean(anchorComments);
+
+    return (
+      <Popover
+        id="simple-popper"
+        open={open}
+        anchorEl={anchorComments}
+        onClose={this.handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center'
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center'
+        }}
+      >
+        {item.comments.map(this.createComment)}
+      </Popover>);
+  }
+
+  createPopoverDescription = () => {
+    const { anchorDescription } = this.state;
+    const open = Boolean(anchorDescription);
+    const { item } = this.props;
+
+    return (
+      <Popover
+        id="simple-popper"
+        open={open}
+        anchorEl={anchorDescription}
+        onClose={this.handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center'
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center'
+        }}
+      >
+        <div className="multiline">
+          {item.description}
+        </div>
+      </Popover>);
   }
 
   render() {
@@ -124,20 +233,28 @@ class Node extends Component {
     const { text } = this.state;
 
     return (
-      <div>
-        <ReactTooltip />
-        <ContextMenuTrigger id={item.id.toString()}>
-          <div id={item.id.toString()} className="node" style={style} onContextMenu={this.handleOnContextMenu}>
-            <Input value={text.toString()} onChange={e => this.setState({ text: e.target.value })} />
-            <button type="button" id="commentButton" data-event="click" data-tip={item.comment}>Комментарий</button>
-          </div>
-        </ContextMenuTrigger>
+      <MuiThemeProvider theme={theme}>
+        <div>
+          <ContextMenuTrigger id={item.id.toString()}>
+            <div id={item.id.toString()} className="node" style={style} onContextMenu={this.handleOnContextMenu}>
+              <Input value={text.toString()} onChange={e => this.setState({ text: e.target.value })} style={{ width: '70%' }} />
+              <button type="button" className="nodeButton" onClick={this.showDescription}>
+                <img alt="Описание" src={DescriptionIcon} />
+              </button>
+              <button type="button" className="nodeButton" onClick={this.showComments}>
+                <img alt="Комментарии" src={CommentsIcon} />
+              </button>
+            </div>
+          </ContextMenuTrigger>
 
-        <ContextMenu id={item.id.toString()}>
-          <MenuItem data={{ id: item.id }} onClick={this.deleteNode}>Удалить</MenuItem>
-          <MenuItem data={{ item }} onClick={this.editNode}>Редактировать</MenuItem>
-        </ContextMenu>
-      </div>
+          <ContextMenu id={item.id.toString()}>
+            <MenuItem data={{ id: item.id }} onClick={this.deleteNode}>Удалить</MenuItem>
+            <MenuItem data={{ item }} onClick={this.editNode}>Редактировать</MenuItem>
+          </ContextMenu>
+          {this.createPopoverDescription()}
+          {this.createPopoverComments()}
+        </div>
+      </MuiThemeProvider>
     );
   }
 }
@@ -146,7 +263,7 @@ Node.propTypes = {
   item: PropTypes.object.isRequired,
   style: PropTypes.object.isRequired,
   connections: PropTypes.array.isRequired,
-  onChangeTextNode: PropTypes.func.isRequired,
+  onChangeNode: PropTypes.func.isRequired,
   onEditNode: PropTypes.func.isRequired,
   onDeleteNode: PropTypes.func.isRequired,
   onUpdatePosition: PropTypes.func.isRequired
@@ -166,8 +283,8 @@ export default connect(
     onEditNode: node => {
       dispatch({ type: 'START_EDIT_NODE', node });
     },
-    onChangeTextNode: node => {
-      dispatch(changeTextNode(node));
+    onChangeNode: node => {
+      dispatch(changeNode(node));
     }
   })
 )(Node);

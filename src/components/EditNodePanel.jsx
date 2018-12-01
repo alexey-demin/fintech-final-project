@@ -3,18 +3,18 @@ import PropTypes from 'prop-types';
 import '../App.css';
 import { connect } from 'react-redux';
 import { CompactPicker } from 'react-color';
-import { changeColorNode, changeCommentNode } from '../actions/nodeAction';
+import { changeNode } from '../actions/nodeAction';
 
 class EditNodePanel extends Component {
   componentDidMount() {
-    document.getElementById('editNodeComment').addEventListener('focusout', this.changeCommentNode);
+    document.getElementById('editNodeDescription').addEventListener('focusout', this.changeDescriptionNode);
   }
 
   changeColor = color => {
-    const { editNode, onChangeColorNode } = this.props;
+    const { editNode, onChangeNode } = this.props;
 
     editNode.color = color.hex;
-    onChangeColorNode(editNode);
+    onChangeNode(editNode);
   }
 
   stopEditNode = () => {
@@ -23,12 +23,25 @@ class EditNodePanel extends Component {
     onStopEditNode();
   }
 
-  changeCommentNode = () => {
-    const { editNode, onChangeCommentNode } = this.props;
+  changeDescriptionNode = () => {
+    const { editNode, onChangeNode } = this.props;
 
-    if (editNode.comment !== this.inputText) {
-      editNode.comment = this.inputText.value;
-      onChangeCommentNode(editNode);
+    if (editNode.description !== this.descriptionTextArea.value) {
+      editNode.description = this.descriptionTextArea.value;
+      onChangeNode(editNode);
+    }
+  }
+
+  addComment = () => {
+    const { editNode, onChangeNode } = this.props;
+
+    if (this.commentTextArea.value.length !== 0) {
+      editNode.comments.push({
+        text: this.commentTextArea.value,
+        date: Date.now()
+      });
+      onChangeNode(editNode);
+      this.commentTextArea.value = '';
     }
   }
 
@@ -38,9 +51,12 @@ class EditNodePanel extends Component {
     return (
       <div id="editNodePanel">
         <CompactPicker color={editNode.color} onChangeComplete={this.changeColor} />
+        <p align="left">Описание:</p>
+        <textarea id="editNodeDescription" className="editNodeTextArea" defaultValue={editNode.description} ref={a => this.descriptionTextArea = a} />
         <p align="left">Комментарий:</p>
-        <textarea id="editNodeComment" defaultValue={editNode.comment} ref={a => this.inputText = a} />
-        <button className="closeButton" type="button" onClick={this.stopEditNode}>Закрыть</button>
+        <textarea className="editNodeTextArea" ref={a => this.commentTextArea = a} />
+        <button id="addCommentButton" type="button" onClick={this.addComment}>Добавить комментарий</button>
+        <button id="closeButton" type="button" onClick={this.stopEditNode}>Закрыть</button>
       </div>
     );
   }
@@ -49,9 +65,8 @@ class EditNodePanel extends Component {
 EditNodePanel.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   editNode: PropTypes.object.isRequired,
-  onChangeColorNode: PropTypes.func.isRequired,
-  onStopEditNode: PropTypes.func.isRequired,
-  onChangeCommentNode: PropTypes.func.isRequired
+  onChangeNode: PropTypes.func.isRequired,
+  onStopEditNode: PropTypes.func.isRequired
 };
 
 export default connect(
@@ -59,14 +74,11 @@ export default connect(
     editNode: state.editNode
   }),
   dispatch => ({
-    onChangeColorNode: node => {
-      dispatch(changeColorNode(node));
-    },
     onStopEditNode: () => {
       dispatch({ type: 'STOP_EDIT_NODE' });
     },
-    onChangeCommentNode: node => {
-      dispatch(changeCommentNode(node));
+    onChangeNode: node => {
+      dispatch(changeNode(node));
     }
   })
 )(EditNodePanel);

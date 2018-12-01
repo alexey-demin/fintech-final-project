@@ -22,17 +22,7 @@ export const updatePositionNodeFromDB = node => async dispatch => {
   dispatch({ type: 'UPDATE_POSITION_NODE', node });
 };
 
-export const changeColorNode = node => async dispatch => {
+export const changeNode = node => async dispatch => {
   await addOrUpdateNodeInDB(node);
-  dispatch({ type: 'CHANGE_COLOR_NODE', node });
-};
-
-export const changeTextNode = node => async dispatch => {
-  await addOrUpdateNodeInDB(node);
-  dispatch({ type: 'CHANGE_TEXT_NODE', node });
-};
-
-export const changeCommentNode = node => async dispatch => {
-  await addOrUpdateNodeInDB(node);
-  dispatch({ type: 'CHANGE_COMMENT_NODE', node });
+  dispatch({ type: 'CHANGE_NODE', node });
 };

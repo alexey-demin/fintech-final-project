@@ -94,7 +94,8 @@ class App extends Component {
     const node = {
       id: Date.now().toString(),
       text: 'text',
-      comment: '',
+      description: '',
+      comments: [],
       position: { x: event.clientX, y: event.clientY },
       color: themeSettings.nodesColor
     };

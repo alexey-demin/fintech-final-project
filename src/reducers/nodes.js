@@ -11,10 +11,8 @@ export default function nodes(state = initialState, action) {
       return [...state.filter(x => x.id !== action.id)];
     case 'LOAD_NODES_SUCCESS':
       return [...state, ...action.nodes];
-    case 'CHANGE_COLOR_NODE':
-    case 'CHANGE_TEXT_NODE':
-    case 'UPDATE_POSITION_NODE':
-    case 'CHANGE_COMMENT_NODE': {
+    case 'CHANGE_NODE':
+    case 'UPDATE_POSITION_NODE': {
       const index = state.findIndex(x => x.id === action.node.id);
 
       return [...state.slice(0, index),
